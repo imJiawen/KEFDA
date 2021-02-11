@@ -5,5 +5,5 @@ The dataset is publicly available at: https://github.com/thunlp/FewRel
 
 This repository under construction :construction:
 
-Related KG resources will be upload soon... ...
+Related KG resources will be uploaded soon... ...
 
