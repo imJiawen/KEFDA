@@ -1,12 +1,9 @@
 # folders
 checkpoint
-test_result
 data
-paper
-
 
 # embedding
-fewshot_re_kit/kg_toolkit/wiki_onto
+#fewshot_re_kit/kg_toolkit/wiki_onto
 
 # files
 *.pyc
@@ -21,20 +18,14 @@ pretrain/glove
 pretrain/bert-base-uncased
 
 # ERNIE
-kg_embed
-ernie_base
+#kg_embed
+#ernie_base
 
 # virtualenv
 .virtual
 
 # result
 result*
-
-# test data
-data/test_wiki.json
-data/test_pubmed.json
-data/train_wiki+pubmed.json
-data/pubmed.json
 
 # tmp file
 pretrain.tar
