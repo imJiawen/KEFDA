@@ -24,11 +24,13 @@ Guidance on how to pre-process your own knowledge graph will be released soon...
 
 To run our model, use command
 
-> bash train.sh
+```
+bash train.sh
+```
 
 This will start the training and evaluating process of KEDAF in a 5-way 1-shot setting.
 
-You can train the model in different configurations by setting different args in ```train.sh```.
+You can train the model in different configurations by setting different args in `train.sh`.
 
 - ```train / val / test```: Specify the training / validation / test set. 
 - ```N```: N in N-way K-shot.
@@ -42,5 +44,7 @@ You can train the model in different configurations by setting different args in
 
 Run the following command to evaluate the existing checkpoint:
 
-> python train.py --only_test --load_ckpt {CHECKPOINT_PATH} {OTHER_ARGS}
+```
+python train.py --only_test --load_ckpt {CHECKPOINT_PATH} {OTHER_ARGS}
+```
 
