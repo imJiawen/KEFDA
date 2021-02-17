@@ -74,19 +74,13 @@ def main():
     # for bert
     parser.add_argument('--pretrain_ckpt', default=None,
            help='bert pre-trained checkpoint')
+    parser.add_argument('--word_embedding_dim', default=50, type=int,
+           help='word_embedding_dim')
     
-    # experiment
-    parser.add_argument('--ent_desc', default=None,
-           help='add the feature of entity definition')
-    parser.add_argument('--ent2id_file', default=None,
-           help='set the entity to id feature for entity definition')
-    parser.add_argument('--feature_dim', default=0, type=int,
-           help='dim of additional features')
 
     parser.add_argument('--gpu', default=None, type=int,
            help='gpu to be used')
-    parser.add_argument('--word_embedding_dim', default=50, type=int,
-           help='word_embedding_dim')
+
 
     # for knoeledge graph
     parser.add_argument('--kg_dict', default=None,
@@ -95,11 +89,12 @@ def main():
            help='add concept embedding as feature')
     parser.add_argument('--kg_encoder', default="distmult",
            help='the knowledge graph encoder')
-    #parser.add_argument('--kg_emb_dim', default=256,type=int,
-    #       help='the dimension of knowledge graph')
-
+    parser.add_argument('--feature_dim', default=0, type=int,
+           help='dim of additional features')
     parser.add_argument('--return_cnpt_id', action='store_true',
            help='return concept id list in sentence encoder')
+
+    # hyper-parameter
     parser.add_argument('--lambda_para', default=0.5, type=float,
            help='trade off cross entropy loss and triplet loss')
     parser.add_argument('--alpha', default=0.7, type=float,
@@ -157,9 +152,16 @@ def main():
     prefix = prefix + "-lambda_para-" + str(opt.lambda_para) + "-beta-" + str(opt.beta)
 
     if opt.kg_dict is not None:
-        prefix = prefix + '-' + opt.kg_encoder
+       prefix = prefix + '-' + opt.kg_encoder
+       ent_desc = opt.kg_dict + "/desc_feature/umls_wiki_id2fea.txt"
+       ent2id_file = opt.kg_dict + "/desc_feature/umls_wiki_cui2id.txt"
+
+    else:
+       ent_desc = None
+       ent2id_file = None
+
     if opt.cnpt_att:
-        prefix += '-cnpt_att'
+       prefix += '-cnpt_att'
 
     ckpt = 'checkpoint/{}.pth.tar'.format(prefix)
     print("save_ckpt_path: {}".format(ckpt))
@@ -181,8 +183,8 @@ def main():
         sentence_encoder = BERTSentenceEncoder_EntDesc(
                 pretrain_ckpt,
                 max_length,
-                opt.ent_desc,
-                ent2id_path=opt.ent2id_file,
+                ent_desc,
+                ent2id_path=ent2id_file,
                 kg_enrich=kg_enrich,
                 kg_emb_dim=kg_emb_dim,
                 add_cnpt_node=opt.add_cnpt_node)

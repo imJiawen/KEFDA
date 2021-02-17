@@ -3,7 +3,7 @@ checkpoint
 data
 
 # embedding
-#fewshot_re_kit/kg_toolkit/wiki_onto
+fewshot_re_kit/kg_toolkit/ontology
 
 # files
 *.pyc

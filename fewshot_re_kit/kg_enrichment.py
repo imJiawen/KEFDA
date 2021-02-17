@@ -12,13 +12,13 @@ import os.path
 class KG_Enrichment():
     def __init__(self, kg_dict="./fewshot_re_kit/kg_toolkit/wiki_onto", multi=False, pad_num=0, kg_dim=256, kg_encoder="distmult"):
         if kg_encoder == "distmult":
-            self.emb_file = kg_dict + "/distmult_wiki_umls_sn.embedding"
+            self.emb_file = kg_dict + "/kg_embedding/distmult_wiki_umls_sn.embedding"
         elif kg_encoder == "analogy":
-            self.emb_file = kg_dict + "/analogy_wiki_umls_sn.embedding"
+            self.emb_file = kg_dict + "/kg_embedding/analogy_wiki_umls_sn.embedding"
         elif kg_encoder == "transe":
-            self.emb_file = kg_dict + "/transe_wiki_umls_sn.embedding"
+            self.emb_file = kg_dict + "/kg_embedding/transe_wiki_umls_sn.embedding"
         elif kg_encoder == "rotate":
-            self.emb_file = kg_dict + "/rotate_wiki_umls_sn.embedding"
+            self.emb_file = kg_dict + "/kg_embedding/rotate_wiki_umls_sn.embedding"
         else:
             print("invalid kg encoder name")
             sys.exit(0)
