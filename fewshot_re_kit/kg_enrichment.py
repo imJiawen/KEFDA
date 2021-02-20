@@ -20,6 +20,9 @@ class KG_Enrichment():
         elif kg_encoder == "rotate":
             self.emb_file = kg_dict + "/kg_embedding/rotate_wiki_umls_sn.embedding"
         else:
+            self.emb_file = kg_dict + "/kg_embedding/" + kg_encoder
+
+        if os.path.exists(self.emb_file):
             print("invalid kg encoder name")
             sys.exit(0)
 
@@ -27,21 +30,18 @@ class KG_Enrichment():
 
         self.triple_file = kg_dict + "/triple2id.txt"
         self.entity2id_file = kg_dict + "/entity2id.txt"
-        self.relation2id_file = kg_dict + "/relation2id.txt"
         self.ent2cnpt_file = kg_dict + "/ent2cnpt.txt"
-        self.ent2path_file = kg_dict + "/ent2path.dict"
         self.cnpt2id_file = kg_dict + "/concept2id.txt"
         self.cnpt_id2desc_file = kg_dict + "/cnpt_id2def_fea.txt"
 
-        self.desc_ent2id_file = kg_dict + "/desc_feature/umls_wiki_cui2id.txt"
-        self.id2desc_file = kg_dict + "/desc_feature/umls_wiki_id2fea.txt"
+        self.desc_ent2id_file = kg_dict + "/desc_feature/entity2id.txt"
+        self.id2desc_file = kg_dict + "/desc_feature/id2fea.txt"
 
 
         self.multi = multi
 
         self.G = self.build_graph()
         self.ent2id, self.id2ent = self.build_dict(self.entity2id_file)
-        self.rel2id, self.id2rel = self.build_dict(self.relation2id_file)
         self.cnpt2id, self.id2cnpt = self.build_dict(self.cnpt2id_file)
         self.ent2cnpt = self.build_dict(self.ent2cnpt_file, id_dict=False)
 
@@ -52,12 +52,6 @@ class KG_Enrichment():
         # description features for concept
         self.cnpt_id2desc_fea, self.cnpt_fea_dim, _ = self.read_id2fea_dict(self.cnpt_id2desc_file)
         self.cnpt_desc_emb = self.load_emb_for_dict(self.cnpt_id2desc_fea, self.cnpt_fea_dim, len(self.cnpt2id))
-
-        if os.path.isfile(self.ent2path_file):
-            self.ent2cnpt_path = json.load(open(self.ent2path_file, 'r', encoding='utf8'))
-            print("loaded dict from ", self.ent2path_file, " done, ", str(len(self.ent2cnpt_path)), " items loaded.")
-        else:
-            self.ent2cnpt_path = {}
 
         self.wiki_search_cnpt = fewshot_re_kit.kg_toolkit.wikidata_entlink.wiki_search_cnpt(kg_folder=kg_dict)
         self.pad_num = pad_num

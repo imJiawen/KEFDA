@@ -120,12 +120,16 @@ class RelationMetaLearner(nn.Module):
         self.kg_enrich = kg_enrich
         self.embedding_learner = EmbeddingLearner()
         self.relation_meta_learner = RelationMetaLearner_FNN(embed_size=kg_dim, num_hidden=kg_dim, out_size=kg_dim)
-        self.y = torch.Tensor([1]).cuda()
+        self.y = torch.Tensor([1])
         self.loss_func = nn.MarginRankingLoss(margin)
         self.beta = beta
-        self.b = nn.Parameter(torch.zeros(1)).cuda()
+        self.b = nn.Parameter(torch.zeros(1))
         hidden_size = 768
         self.cnpt_attention = CnptAttention(hidden_size*3, hidden_size)
+
+        if torch.cuda.is_available():
+            self.y = self.y.cuda()
+            self.b = self.b.cuda()
 
 
     def forward(self, n, pair_list, cnpt_att=False, query=None, samehead=False):
@@ -151,11 +155,17 @@ class RelationMetaLearner(nn.Module):
 
         neg_list = neg_sampler(n_pair_list, sample_size, samehead=samehead)
 
-        pos_head_emb = self.kg_enrich.ent_embeds(torch.LongTensor(pos_head_id_list)).cuda() #(k, 256)
-        pos_tail_emb = self.kg_enrich.ent_embeds(torch.LongTensor(pos_tail_id_list)).cuda()
+        pos_head_emb = self.kg_enrich.ent_embeds(torch.LongTensor(pos_head_id_list)) #(k, 256)
+        pos_tail_emb = self.kg_enrich.ent_embeds(torch.LongTensor(pos_tail_id_list))
 
-        neg_head_emb = self.kg_enrich.ent_embeds(torch.LongTensor([i[0] for i in neg_list])).cuda() #(k, 256)
-        neg_tail_emb = self.kg_enrich.ent_embeds(torch.LongTensor([i[1] for i in neg_list])).cuda()
+        neg_head_emb = self.kg_enrich.ent_embeds(torch.LongTensor([i[0] for i in neg_list])) #(k, 256)
+        neg_tail_emb = self.kg_enrich.ent_embeds(torch.LongTensor([i[1] for i in neg_list]))
+
+        if torch.cuda.is_available():
+            pos_head_emb = pos_head_emb.cuda()
+            pos_tail_emb = pos_tail_emb.cuda()
+            neg_head_emb = neg_head_emb.cuda()
+            neg_tail_emb = neg_tail_emb.cuda()
 
         pos_head_tail_emb = torch.cat((pos_head_emb, pos_tail_emb), -1) #(k, 512)
         
@@ -169,6 +179,11 @@ class RelationMetaLearner(nn.Module):
             assert query is not None
             head_desc_fea = self.kg_enrich.cnpt_desc_emb(torch.LongTensor(pos_head_id_list)).cuda() #(k, D)
             tail_desc_fea = self.kg_enrich.cnpt_desc_emb(torch.LongTensor(pos_tail_id_list)).cuda() #(k, D)
+
+            if torch.cuda.is_available():
+                head_desc_fea = head_desc_fea.cuda()
+                tail_desc_fea = tail_desc_fea.cuda()
+
             key = [head_desc_fea, tail_desc_fea]
             score = self.cnpt_attention(query, key) #(k)
             score = score.unsqueeze(-1)  #[k, 1]
@@ -225,14 +240,17 @@ class ProtoMeta(fewshot_re_kit.framework.FewShotREModel):
         self.loss_func = nn.MarginRankingLoss(self.margin)
         self.l2loss = nn.MSELoss()
         self.softmax = nn.Softmax(dim=-1)
-        self.y = torch.Tensor([1]).cuda()
-        self.zero_r = torch.full((1, self.kg_dim), -float(1)).cuda()
+        self.y = torch.Tensor([1])
+        self.zero_r = torch.full((1, self.kg_dim), -float(1))
         self.lambda_para = lambda_para
         self.lambda_para = self.lambda_para
         self.batch_norm = nn.BatchNorm1d(N)
         self.samehead = samehead
         self.cnpt_att = cnpt_att
 
+        if torch.cuda.is_available():
+            self.y = self.y.cuda()
+            self.zero_r = self.zero_r.cuda()
     #L2
     def __dist__(self, x, y, dim):
         if self.dot:
@@ -284,11 +302,17 @@ class ProtoMeta(fewshot_re_kit.framework.FewShotREModel):
             else:
                 neg_list = neg_sampler(query_cnpt_pair_ids[n], query_sample_size, samehead=self.samehead)
 
-                pos_head_emb = self.kg_enrich.ent_embeds(torch.LongTensor([i[0] for i in query_cnpt_pair_ids[n]])).cuda() #(k, 256)
-                pos_tail_emb = self.kg_enrich.ent_embeds(torch.LongTensor([i[1] for i in query_cnpt_pair_ids[n]])).cuda()
+                pos_head_emb = self.kg_enrich.ent_embeds(torch.LongTensor([i[0] for i in query_cnpt_pair_ids[n]])) #(k, 256)
+                pos_tail_emb = self.kg_enrich.ent_embeds(torch.LongTensor([i[1] for i in query_cnpt_pair_ids[n]]))
 
-                neg_head_emb = self.kg_enrich.ent_embeds(torch.LongTensor([i[0] for i in neg_list])).cuda() #(k, 256)
-                neg_tail_emb = self.kg_enrich.ent_embeds(torch.LongTensor([i[1] for i in neg_list])).cuda()
+                neg_head_emb = self.kg_enrich.ent_embeds(torch.LongTensor([i[0] for i in neg_list])) #(k, 256)
+                neg_tail_emb = self.kg_enrich.ent_embeds(torch.LongTensor([i[1] for i in neg_list]))
+
+                if torch.cuda.is_available():
+                    pos_head_emb = pos_head_emb.cuda()
+                    pos_tail_emb = pos_tail_emb.cuda()
+                    neg_head_emb = neg_head_emb.cuda()
+                    neg_tail_emb = neg_tail_emb.cuda()
 
                 query_ht_emb_list.append([pos_head_emb, pos_tail_emb])
 
@@ -324,7 +348,9 @@ class ProtoMeta(fewshot_re_kit.framework.FewShotREModel):
             
             for n in range(total_Q):
                 if query_ht_emb_list[n] is None:
-                    triplet_score =  torch.full((1, N), float(0)).cuda()
+                    triplet_score =  torch.full((1, N), float(0))
+                    if torch.cuda.is_available():
+                        triplet_score = triplet_score.cuda()
                 else:
                     triplet_score = self.embedding_learner(query_ht_emb_list[n][0], meta_batch, query_ht_emb_list[n][1]) #(N, k)
                     triplet_score = triplet_score.sum(-1)  #(N)
@@ -339,7 +365,9 @@ class ProtoMeta(fewshot_re_kit.framework.FewShotREModel):
             ce_logits = ce_logits.view(-1, N)  #((QN,N))
 
             # if there is no rel meta, lambda is 1
-            cnpt_mask = torch.Tensor(cnpt_mask).cuda() #(N)
+            cnpt_mask = torch.Tensor(cnpt_mask) #(N)
+            if torch.cuda.is_available():
+                cnpt_mask = cnpt_mask.cuda()
             weight_ce = torch.add(torch.mul(cnpt_mask, (self.lambda_para-1)), 1).unsqueeze(0).expand(total_Q, -1)
             weight_triplet = torch.mul(cnpt_mask, (1-self.lambda_para)).unsqueeze(0).expand(total_Q, -1)
 
@@ -355,7 +383,9 @@ class ProtoMeta(fewshot_re_kit.framework.FewShotREModel):
             with torch.no_grad():
                 for n in range(total_Q):
                     if query_ht_emb_list[n] is None:
-                        triplet_score =  torch.full((1, N), float(0)).cuda()
+                        triplet_score =  torch.full((1, N), float(0))
+                        if torch.cuda.is_available():
+                            triplet_score = triplet_score.cuda()
                     else:
                         triplet_score = self.embedding_learner(query_ht_emb_list[n][0], meta_batch, query_ht_emb_list[n][1]) #(N, k)
                         triplet_score = triplet_score.sum(-1)  #(N)
@@ -370,7 +400,10 @@ class ProtoMeta(fewshot_re_kit.framework.FewShotREModel):
                 ce_logits = ce_logits.view(-1, N)  #((QN,N))
                 
                 # if there is no rel meta, lambda is 1
-                cnpt_mask = torch.Tensor(cnpt_mask).cuda() #(N)
+                cnpt_mask = torch.Tensor(cnpt_mask) #(N)
+                if torch.cuda.is_available():
+                    cnpt_mask = cnpt_mask.cuda()
+                    
                 weight_ce = torch.add(torch.mul(cnpt_mask, (self.lambda_para-1)), 1).unsqueeze(0).expand(total_Q, -1)
                 weight_triplet = torch.mul(cnpt_mask, (1-self.lambda_para)).unsqueeze(0).expand(total_Q, -1)
 

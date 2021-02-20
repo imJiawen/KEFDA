@@ -62,7 +62,7 @@ class FewShotREModel(nn.Module):
 
 class FewShotREFramework:
 
-    def __init__(self, train_data_loader, val_data_loader, test_data_loader, adv_data_loader=None, adv=False, d=None, cal_meta_rel=False, keep_grad=False, gamma=0.5):
+    def __init__(self, train_data_loader, val_data_loader, test_data_loader, d=None, cal_meta_rel=False, keep_grad=False, gamma=0.5):
         '''
         train_data_loader: DataLoader for training.
         val_data_loader: DataLoader for validating.
@@ -71,15 +71,10 @@ class FewShotREFramework:
         self.train_data_loader = train_data_loader
         self.val_data_loader = val_data_loader
         self.test_data_loader = test_data_loader
-        self.adv_data_loader = adv_data_loader
-        self.adv = adv
         self.cal_meta_rel = cal_meta_rel
         self.keep_grad = keep_grad
         self.gamma = gamma
-        if adv:
-            self.adv_cost = nn.CrossEntropyLoss()
-            self.d = d
-            self.d.cuda()
+
     
     def __load_model__(self, ckpt):
         '''
@@ -132,9 +127,7 @@ class FewShotREFramework:
               warmup_step=300,
               grad_iter=1,
               fp16=False,
-              pair=False,
-              adv_dis_lr=1e-1,
-              adv_enc_lr=1e-1):
+              pair=False):
         '''
         model: a FewShotREModel instance
         model_name: Name of the model
@@ -165,18 +158,14 @@ class FewShotREFramework:
                     if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
                 ]
             optimizer = AdamW(parameters_to_optimize, lr=2e-5, correct_bias=False)
-            if self.adv:
-                optimizer_encoder = AdamW(parameters_to_optimize, lr=1e-5, correct_bias=False)
+
             scheduler = get_linear_schedule_with_warmup(optimizer, num_warmup_steps=warmup_step, num_training_steps=train_iter) 
         else:
             optimizer = pytorch_optim(model.parameters(),
                     learning_rate, weight_decay=weight_decay)
-            if self.adv:
-                optimizer_encoder = pytorch_optim(model.parameters(), lr=adv_enc_lr)
+
             scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=lr_step_size)
 
-        if self.adv:
-            optimizer_dis = pytorch_optim(self.d.parameters(), lr=adv_dis_lr)
 
         if load_ckpt:
             state_dict = self.__load_model__(load_ckpt)['state_dict']
@@ -194,8 +183,6 @@ class FewShotREFramework:
             model, optimizer = amp.initialize(model, optimizer, opt_level='O1')
 
         model.train()
-        if self.adv:
-            self.d.train()
 
         # Training
         best_acc = 0

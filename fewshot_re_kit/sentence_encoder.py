@@ -158,14 +158,23 @@ class BERTSentenceEncoder_EntDesc(nn.Module):
                 else:
                     cnpt_emb = cnpt
 
-            head_fea = torch.zeros(self.fea_dim,dtype=torch.float).cuda()
-            tail_fea = torch.zeros(self.fea_dim,dtype=torch.float).cuda()
+            
+            head_fea = torch.zeros(self.fea_dim,dtype=torch.float)
+            tail_fea = torch.zeros(self.fea_dim,dtype=torch.float)
+
+            if torch.cuda.is_available():
+                head_fea = head_fea.cuda()
+                tail_fea = tail_fea.cuda()
 
             if head_id in self.id2fea_dict:
-                head_fea = self.id2fea_dict[head_id].cuda()
+                head_fea = self.id2fea_dict[head_id]
+                if torch.cuda.is_available():
+                    head_fea = head_fea.cuda()
 
             if tail_id in self.id2fea_dict:
-                tail_fea = self.id2fea_dict[tail_id].cuda()
+                tail_fea = self.id2fea_dict[tail_id]
+                if torch.cuda.is_available():
+                    tail_fea = tail_fea.cuda()
 
             tmp_sent = torch.cat((outputs[1][i], head_fea, tail_fea), -1) # (s,h,t) (D+H+H)
 
@@ -322,14 +331,22 @@ class BERTSentenceEncoder_cnpt_id(nn.Module):
                 else:
                     cnpt_emb = cnpt
 
-            head_fea = torch.zeros(self.fea_dim,dtype=torch.float).cuda()
-            tail_fea = torch.zeros(self.fea_dim,dtype=torch.float).cuda()
+            head_fea = torch.zeros(self.fea_dim,dtype=torch.float)
+            tail_fea = torch.zeros(self.fea_dim,dtype=torch.float)
+
+            if torch.cuda.is_available():
+                head_fea = head_fea.cuda()
+                tail_fea = tail_fea.cuda()
 
             if head_id in self.id2fea_dict:
-                head_fea = self.id2fea_dict[head_id].cuda()
+                head_fea = self.id2fea_dict[head_id]
+                if torch.cuda.is_available():
+                    head_fea = head_fea.cuda()
 
             if tail_id in self.id2fea_dict:
-                tail_fea = self.id2fea_dict[tail_id].cuda()
+                tail_fea = self.id2fea_dict[tail_id]
+                if torch.cuda.is_available():
+                    tail_fea = tail_fea.cuda()
 
             tmp_sent = torch.cat((outputs[1][i], head_fea, tail_fea), -1) # (s,h,t) (D+H+H)
 

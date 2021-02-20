@@ -13,9 +13,42 @@ Please place the *ontology* folder at ```./fewshot_re_kit/kg_toolkit/```.
 
 ### Use your own knowledge graph
 
-<!--you can also choose to use your own knowledge graph by pre-processing it into the following format. -->
+You can also choose to use your own knowledge graph by pre-processing it into a specific format.
 
-Guidance on how to pre-process your own knowledge graph will be released soon....  :construction:
+1. Convert your knowledge graph into a low-dimensional representation, and we use [OpenKE Toolkit](https://github.com/thunlp/OpenKE) for this process.
+Please place the learned embedding in the ```./fewshot_re_kit/kg_toolkil/ontology/kg_embedding``` folder.
+2. Please set the ```--kg_encoder``` argument in ```train.sh``` to the kg embedding file name, i.e. ```--kg_encoder my_transe.embedding```.
+3. Please place the following files in the ```./fewshot_re_kit/kg_toolkil/ontology``` folder:
+    - entity2id.txt
+    ```
+    # total entities
+    ENTITY_1  id_1
+    ENTITY_2  id_2
+    ...
+    ```
+    - ent2cnpt.txt
+    ```
+    ENTITY  CNPT1   CNPT2   ...
+    ```
+    - triple2id.txt
+    ```
+    # total triples
+    head_entity_id rel_id tail_entity_id
+    ...
+    ```
+    - concept2id.txt
+    ```
+    # total concepts
+    CNPT_1  id_1
+    ...
+    ```
+    - cnpt_id2def_fea.txt
+    ```
+    CNPT_id DEF_FEATURES
+    ...
+    ```
+
+<!--Guidance on how to pre-process your own knowledge graph will be released soon....  :construction: -->
 
 
 ## How to Run
