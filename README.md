@@ -42,11 +42,19 @@ Please place the learned embedding in the ```./fewshot_re_kit/kg_toolkil/ontolog
     CNPT_1  id_1
     ...
     ```
-    - cnpt_id2def_fea.txt
+    - cnpt_id2def_fea.txt (The description features of concepts can be produced by [BERT](https://github.com/huggingface/transformers)).
     ```
-    CNPT_id DEF_FEATURES
-    ...
+    CNPT_id CNPT_DESC_FEATURES
     ```
+    - desc_feature/entity2id.txt
+    ```
+    ENTITY id
+    ```
+    - desc_feature/id2fea.txt
+    ```
+    ENT_id ENT_DESC_FEATURES
+    ```
+    
 
 <!--Guidance on how to pre-process your own knowledge graph will be released soon....  :construction: -->
 
@@ -68,10 +76,11 @@ You can train the model in different configurations by setting different args in
 - ```train / val / test```: Specify the training / validation / test set. 
 - ```N```: N in N-way K-shot.
 - ```K```: N in N-way K-shot.
-- ```Q```: Sample Q query instances for each relation.
-- ```kg_encoder```: Which knowledge graph encoder is used to encode the graph (only need to be set for the provided pre-trained graph embedding).
+- ```kg_encoder```: Which knowledge graph encoder is used to encode the graph (for the provided pre-trained graph embedding, choose between transe/distmult/analogy/rotate; otherwise, set it to the name of the customized embedding file).
 - ```cnpt_att```: Whether to aggregate relation meta using the attention mechanism.
 - ```lambda_para```: Trade-off the importance of the knowledge enhanced prototype network and the relation-meta learning network, and the value should be picked between [0,1]. The higher the value, the more weight is given to the prototype network.
+
+More arguments please see ```train.py``` for detail.
 
 ### Inference
 
