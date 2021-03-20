@@ -216,7 +216,7 @@ class RelationMetaLearner(nn.Module):
 
 
 class ProtoMeta(fewshot_re_kit.framework.FewShotREModel):
-    def __init__(self, sentence_encoder, N, K, dot=False,  dropout=0,  word_embedding_dim=50, feature_size=0, hidden_size=230, kg_dim=256, kg_enrich=None, lambda_para=0.5, beta=1, lambda_para=0.7, samehead=False, cnpt_att=False):
+    def __init__(self, sentence_encoder, N, K, dot=False,  dropout=0,  word_embedding_dim=50, feature_size=0, hidden_size=230, kg_dim=256, kg_enrich=None, beta=1, lambda_para=0.7, samehead=False, cnpt_att=False):
         fewshot_re_kit.framework.FewShotREModel.__init__(self, sentence_encoder)
         self.N = N
         self.K = K

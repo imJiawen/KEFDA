@@ -13,7 +13,7 @@ import sys
 from torch import optim
 from . import network
 import transformers
-from . import knowledge_bert
+#from . import knowledge_bert
 
 
 def read_id2fea_dict(id2fea_path):

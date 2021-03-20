@@ -5,12 +5,7 @@ import fewshot_re_kit
 import models
 from models.proto import Proto
 from models.my_proto import MyProto
-from models.rel_meta import RelMeta
-from models.rel_meta_simp import RelMeta_Sim
-from models.maml import MAML
-from models.metaR import MetaR
 from models.proto_meta import ProtoMeta
-from models.proto_meta_finetune import ProtoMetaFineTune
 from models.d import Discriminator
 import sys
 import torch
@@ -146,7 +141,7 @@ def main():
     print("feature dim: {}".format(opt.feature_dim))
     print("kg_dir: {}".format(opt.kg_dict))
     print("kg_dim: {}".format(str(kg_emb_dim)))
-    print("use_ernie: {}".format(str(opt.use_ernie)))
+    #print("use_ernie: {}".format(str(opt.use_ernie)))
 
     prefix = '-'.join([model_name, opt.train, opt.val, str(N), str(K)])
     prefix = prefix + "-lambda_para-" + str(opt.lambda_para) + "-beta-" + str(opt.beta)
@@ -195,11 +190,11 @@ def main():
     
 
     train_data_loader = get_loader(opt.train, sentence_encoder,
-            N=trainN, K=K, Q=Q, na_rate=opt.na_rate, batch_size=batch_size, kg_enhance=kg_enrich, use_ernie=opt.use_ernie)
+            N=trainN, K=K, Q=Q, na_rate=opt.na_rate, batch_size=batch_size, kg_enhance=kg_enrich, use_ernie=False)
     val_data_loader = get_loader(opt.val, sentence_encoder,
-            N=N, K=K, Q=Q, na_rate=opt.na_rate, batch_size=batch_size, kg_enhance=kg_enrich, use_ernie=opt.use_ernie)
+            N=N, K=K, Q=Q, na_rate=opt.na_rate, batch_size=batch_size, kg_enhance=kg_enrich, use_ernie=False
     test_data_loader = get_loader(opt.test, sentence_encoder,
-            N=N, K=K, Q=Q, na_rate=opt.na_rate, batch_size=batch_size, kg_enhance=kg_enrich, use_ernie=opt.use_ernie)
+            N=N, K=K, Q=Q, na_rate=opt.na_rate, batch_size=batch_size, kg_enhance=kg_enrich, use_ernie=False)
 
    
     if opt.optim == 'sgd':
