@@ -9,7 +9,6 @@ fewshot_re_kit/kg_toolkit/ontology
 *.pyc
 *.swp
 *.tar
-*.sh
 sbatch*
 *.ipynb
 
