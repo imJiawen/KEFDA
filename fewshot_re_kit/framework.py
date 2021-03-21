@@ -62,7 +62,7 @@ class FewShotREModel(nn.Module):
 
 class FewShotREFramework:
 
-    def __init__(self, train_data_loader, val_data_loader, test_data_loader, d=None, cal_meta_rel=False, keep_grad=False, gamma=0.5):
+    def __init__(self, train_data_loader, val_data_loader, test_data_loader, d=None, cal_meta_rel=False, keep_grad=False):
         '''
         train_data_loader: DataLoader for training.
         val_data_loader: DataLoader for validating.
@@ -73,7 +73,6 @@ class FewShotREFramework:
         self.test_data_loader = test_data_loader
         self.cal_meta_rel = cal_meta_rel
         self.keep_grad = keep_grad
-        self.gamma = gamma
 
     
     def __load_model__(self, ckpt):

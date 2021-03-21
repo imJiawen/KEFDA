@@ -10,7 +10,7 @@ import torch.nn.functional as F
 import os.path
 
 class KG_Enrichment():
-    def __init__(self, kg_dict="./fewshot_re_kit/kg_toolkit/wiki_onto", multi=False, pad_num=0, kg_dim=256, kg_encoder="distmult"):
+    def __init__(self, kg_dict="./fewshot_re_kit/kg_toolkit/ontology", multi=False, pad_num=0, kg_dim=256, kg_encoder="distmult"):
         if kg_encoder == "distmult":
             self.emb_file = kg_dict + "/kg_embedding/distmult_wiki_umls_sn.embedding"
         elif kg_encoder == "analogy":
@@ -22,8 +22,8 @@ class KG_Enrichment():
         else:
             self.emb_file = kg_dict + "/kg_embedding/" + kg_encoder
 
-        if os.path.exists(self.emb_file):
-            print("invalid kg encoder name")
+        if os.path.exists("." + self.emb_file):
+            print("invalid kg encoder name, cannot find file ", self.emb_file)
             sys.exit(0)
 
         self.ent_embeds = self.load_kg_emb(self.emb_file, dim=kg_dim)
@@ -53,7 +53,7 @@ class KG_Enrichment():
         self.cnpt_id2desc_fea, self.cnpt_fea_dim, _ = self.read_id2fea_dict(self.cnpt_id2desc_file)
         self.cnpt_desc_emb = self.load_emb_for_dict(self.cnpt_id2desc_fea, self.cnpt_fea_dim, len(self.cnpt2id))
 
-        self.wiki_search_cnpt = fewshot_re_kit.kg_toolkit.wikidata_entlink.wiki_search_cnpt(kg_folder=kg_dict)
+        #self.wiki_search_cnpt = fewshot_re_kit.kg_toolkit.wikidata_entlink.wiki_search_cnpt(kg_folder=kg_dict)
         self.pad_num = pad_num
 
 

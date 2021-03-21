@@ -129,7 +129,7 @@ class RelationMetaLearner(nn.Module):
 
         if torch.cuda.is_available():
             self.y = self.y.cuda()
-            self.b = self.b.cuda()
+            #self.b = self.b.cuda()
 
 
     def forward(self, n, pair_list, cnpt_att=False, query=None, samehead=False):

@@ -67,7 +67,7 @@ def main():
            help='only test')
 
     # for bert
-    parser.add_argument('--pretrain_ckpt', default=None,
+    parser.add_argument('--pretrain_ckpt', default='bert-base-uncased',
            help='bert pre-trained checkpoint')
     parser.add_argument('--word_embedding_dim', default=50, type=int,
            help='word_embedding_dim')
@@ -166,7 +166,7 @@ def main():
         print("load kg_enrich done")
     
 
-    pretrain_ckpt = opt.pretrain_ckpt or 'bert-base-uncased'
+    pretrain_ckpt = opt.pretrain_ckpt # or 'bert-base-uncased'
 
     if return_cnpt_id:
         sentence_encoder = BERTSentenceEncoder_cnpt_id(
@@ -190,11 +190,11 @@ def main():
     
 
     train_data_loader = get_loader(opt.train, sentence_encoder,
-            N=trainN, K=K, Q=Q, na_rate=opt.na_rate, batch_size=batch_size, kg_enhance=kg_enrich, use_ernie=False)
+            N=trainN, K=K, Q=Q, batch_size=batch_size, kg_enhance=kg_enrich, use_ernie=False)
     val_data_loader = get_loader(opt.val, sentence_encoder,
-            N=N, K=K, Q=Q, na_rate=opt.na_rate, batch_size=batch_size, kg_enhance=kg_enrich, use_ernie=False
+            N=N, K=K, Q=Q, batch_size=batch_size, kg_enhance=kg_enrich, use_ernie=False
     test_data_loader = get_loader(opt.test, sentence_encoder,
-            N=N, K=K, Q=Q, na_rate=opt.na_rate, batch_size=batch_size, kg_enhance=kg_enrich, use_ernie=False)
+            N=N, K=K, Q=Q, batch_size=batch_size, kg_enhance=kg_enrich, use_ernie=False)
 
    
     if opt.optim == 'sgd':
@@ -207,7 +207,7 @@ def main():
     else:
         raise NotImplementedError
     
-    framework = FewShotREFramework(train_data_loader, val_data_loader, test_data_loader, cal_meta_rel=cal_meta_rel, keep_grad=keep_grad, lambda_para=opt.lambda_para)
+framework = FewShotREFramework(train_data_loader, val_data_loader, test_data_loader, cal_meta_rel=cal_meta_rel, keep_grad=keep_grad=)
 
     if model_name == 'proto':
         model = Proto(sentence_encoder, hidden_size=opt.hidden_size, dropout=opt.dropout, feature_size=opt.feature_dim)
@@ -230,7 +230,7 @@ def main():
     if not opt.only_test:
         framework.train(model, prefix, batch_size, trainN, N, K, Q,
                 pytorch_optim=pytorch_optim, load_ckpt=opt.load_ckpt, save_ckpt=ckpt,
-                na_rate=opt.na_rate, val_step=opt.val_step, fp16=opt.fp16, pair=opt.pair, 
+                val_step=opt.val_step, fp16=opt.fp16, 
                 train_iter=opt.train_iter, val_iter=opt.val_iter, bert_optim=bert_optim)
     else:
         ckpt = opt.load_ckpt
@@ -238,7 +238,7 @@ def main():
             print("Warning: --load_ckpt is not specified. Will load Hugginface pre-trained checkpoint.")
             ckpt = 'none'
 
-    acc = framework.eval(model, batch_size, N, K, Q, opt.test_iter, na_rate=opt.na_rate, ckpt=ckpt, pair=opt.pair)
+    acc = framework.eval(model, batch_size, N, K, Q, opt.test_iter, ckpt=ckpt)
     print("RESULT: %.2f" % (acc * 100))
 
 if __name__ == "__main__":
