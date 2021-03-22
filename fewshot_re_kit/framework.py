@@ -312,7 +312,7 @@ class FewShotREFramework:
                     if self.cal_meta_rel:
                         logits, pred = model(support, query, None, N, K, Q * N + Q * na_rate, is_eval=True)
                     else:
-                        logits, pred = model(support, query, N, K, Q * N + Q * na_rate)
+                        logits, pred = model(support, query, None, N, K, Q * N + Q * na_rate)
 
 
                 right = model.accuracy(pred, label)
@@ -345,9 +345,9 @@ class FewShotREFramework:
                         
                         
                         if self.cal_meta_rel:
-                            logits, pred  = model(support, query, N, K, Q * N + Q * na_rate, is_eval=True)
+                            logits, pred  = model(support, query, None, N, K, Q * N + Q * na_rate, is_eval=True)
                         else:
-                            logits, pred = model(support, query, N, K, Q * N + Q * na_rate)
+                            logits, pred = model(support, query, None, N, K, Q * N + Q * na_rate)
 
 
                     right = model.accuracy(pred, label)
