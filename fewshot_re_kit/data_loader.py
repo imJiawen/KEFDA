@@ -15,7 +15,7 @@ class FewRelDataset(data.Dataset):
     """
     FewRel Dataset
     """
-    def __init__(self, name, encoder, N, K, Q, na_rate=0s, root, kg_enhance=None):
+    def __init__(self, name, encoder, N, K, Q, na_rate, root, kg_enhance=None):
         self.root = root
         path = os.path.join(root, name + ".json")
         if not os.path.exists(path):

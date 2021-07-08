@@ -192,7 +192,7 @@ def main():
     train_data_loader = get_loader(opt.train, sentence_encoder,
             N=trainN, K=K, Q=Q, batch_size=batch_size, kg_enhance=kg_enrich, use_ernie=False)
     val_data_loader = get_loader(opt.val, sentence_encoder,
-            N=N, K=K, Q=Q, batch_size=batch_size, kg_enhance=kg_enrich, use_ernie=False
+            N=N, K=K, Q=Q, batch_size=batch_size, kg_enhance=kg_enrich, use_ernie=False)
     test_data_loader = get_loader(opt.test, sentence_encoder,
             N=N, K=K, Q=Q, batch_size=batch_size, kg_enhance=kg_enrich, use_ernie=False)
 
@@ -207,7 +207,7 @@ def main():
     else:
         raise NotImplementedError
     
-framework = FewShotREFramework(train_data_loader, val_data_loader, test_data_loader, cal_meta_rel=cal_meta_rel, keep_grad=keep_grad=)
+    framework = FewShotREFramework(train_data_loader, val_data_loader, test_data_loader, cal_meta_rel=cal_meta_rel, keep_grad=keep_grad)
 
     if model_name == 'proto':
         model = Proto(sentence_encoder, hidden_size=opt.hidden_size, dropout=opt.dropout, feature_size=opt.feature_dim)
