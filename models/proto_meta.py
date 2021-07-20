@@ -274,13 +274,11 @@ class ProtoMeta(fewshot_re_kit.framework.FewShotREModel):
         query_emb = query_emb.view(-1, total_Q, query_emb.shape[-1])
         query_cnpt_emb = query_cnpt_emb.view(-1, total_Q, query_cnpt_emb.shape[-1])
 
-        support_desc_features, support_all_features = self.sentence_enhance(support_emb, support_cnpt_emb)
-        query_desc_features, query_all_features = self.sentence_enhance(query_emb, query_cnpt_emb)
+        _, support_all_features = self.sentence_enhance(support_emb, support_cnpt_emb)
+        _, query_all_features = self.sentence_enhance(query_emb, query_cnpt_emb)
 
         support_proto = torch.mean(support_all_features, dim=-2)
         support_proto = support_proto.view(-1, N, support_proto.shape[-1])
-
-        query_desc_features = query_desc_features.view(total_Q, query_desc_features.shape[-1])
 
         query_emb = query_emb.squeeze()
 
